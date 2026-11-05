@@ -15,8 +15,8 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Non-root 사용자 생성 (보안 강화)
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Non-root 사용자 생성 (보안 강화 및 명시적 numeric UID/GID 사용)
+RUN groupadd -r -g 10001 appuser && useradd -r -u 10001 -g appuser appuser
 
 COPY --from=builder /root/.local /home/appuser/.local
 COPY src/ /app/src/
@@ -24,9 +24,10 @@ COPY sql/ /app/sql/
 
 ENV PATH=/home/appuser/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-USER appuser
+USER 10001:10001
 
 EXPOSE 8000
 

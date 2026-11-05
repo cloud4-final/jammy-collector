@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
 
-from apps.collector.src.telemetry import setup_tracing
+from apps.collector.src.main import app
 
 
 def test_post_new_event_201(client):
@@ -115,6 +117,23 @@ def test_list_filters_and_order(client):
         assert prev >= nxt
 
 
+def test_list_empty_query_params_ignored(client):
+    client.post(
+        "/api/v1/events",
+        json={
+            "event_id": "evt-empty-query",
+            "region": "site-a",
+            "vehicle_id": "v-eq-1",
+        },
+    )
+    # Empty query params (?region=&vehicle_id=) should be treated as no filter
+    res = client.get("/api/v1/events?region=&vehicle_id=")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["count"] >= 1
+    assert any(item["event_id"] == "evt-empty-query" for item in data["items"])
+
+
 def test_list_limit_bounds_422(client):
     # limit < 1 -> 422
     res_zero = client.get("/api/v1/events?limit=0")
@@ -184,5 +203,8 @@ def test_metrics_endpoint_label_uses_route_template(client):
 
 def test_app_starts_without_otel_env(monkeypatch):
     monkeypatch.delenv("OTEL_EXPORTER_OTLP_ENDPOINT", raising=False)
-    test_app = FastAPI()
-    setup_tracing(test_app)
+    with TestClient(app) as test_client:
+        res = test_client.get("/healthz")
+        assert res.status_code == 200
+        assert res.json()["status"] == "ok"
+    assert not isinstance(trace.get_tracer_provider(), TracerProvider)

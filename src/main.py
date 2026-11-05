@@ -214,8 +214,10 @@ def list_events(
     limit: int = Query(50, ge=1, le=500),
 ):
     """차량 원격 측정 이벤트 목록 조회"""
+    clean_region = region if region else None
+    clean_vehicle_id = vehicle_id if vehicle_id else None
     try:
-        items = repo.list(region=region, vehicle_id=vehicle_id, limit=limit)
+        items = repo.list(region=clean_region, vehicle_id=clean_vehicle_id, limit=limit)
         return {"items": items, "count": len(items)}
     except DatabaseUnavailable as exc:
         logger.error(f"Database error during event list: {exc}")
