@@ -181,9 +181,10 @@ HTTP/1.1 200 OK
 - `sample/events.jsonl`: 20건의 모빌리티 이벤트 데이터 (4개 region 고루 포함).
 - `sample/send_events.sh`: 대량 이벤트 전송 스크립트.
   ```bash
-  # 로컬 서버로 샘플 전송
+  # 로컬 서버로 샘플 전송 (두 번째 인자로 다른 JSONL 파일 지정 가능)
   ./sample/send_events.sh http://127.0.0.1:8000
   ```
+- 대량 시험용 데이터(시카고시 공개 택시 운행 데이터를 변환한 1,000건·9,870건)의 출처, 변환 규칙, 한계는 [`sample/DATA_SOURCES.md`](sample/DATA_SOURCES.md)에 있습니다. 파일 자체는 저장소에 없습니다.
 
 ---
 
