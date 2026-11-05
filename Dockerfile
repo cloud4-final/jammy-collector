@@ -20,6 +20,7 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 COPY --from=builder /root/.local /home/appuser/.local
 COPY src/ /app/src/
+COPY sql/ /app/sql/
 
 ENV PATH=/home/appuser/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
