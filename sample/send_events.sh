@@ -3,14 +3,14 @@ set -euo pipefail
 
 BASE_URL="${1:-http://127.0.0.1:8000}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-JSONL_FILE="${SCRIPT_DIR}/events.jsonl"
+JSONL_FILE="${2:-${SCRIPT_DIR}/events.jsonl}"
 
 if [[ ! -f "$JSONL_FILE" ]]; then
     echo "Error: ${JSONL_FILE} not found." >&2
     exit 1
 fi
 
-echo "Sending events to ${BASE_URL}/api/v1/events..."
+echo "Sending ${JSONL_FILE} to ${BASE_URL}/api/v1/events..."
 count=0
 while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -z "$line" ]] && continue
