@@ -10,7 +10,7 @@
 
 - **공식 배포 이미지:**
   `ghcr.io/cloud4-final/jammy-collector:sha-REPLACE_ME`
-  - `main` 브랜치 머지 후 CI/CD 파이프라인의 `publish-image` 워크플로우에 의해 자동 빌드 및 게시됩니다.
+  - `main` 브랜치 머지 후 CI/CD 파이프라인의 `Publish (.github/workflows/publish.yml)` 워크플로우에 의해 자동 빌드 및 게시됩니다.
 - **로컬 개발/테스트 빌드:**
   ```bash
   docker build -t jammy-collector:dev .
@@ -24,6 +24,9 @@
 기본 포트는 `8000`입니다.
 
 ```bash
+# 0. 데이터베이스 연결 URL 설정 (예시)
+export DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres
+
 # 1. DB 마이그레이션 (쓰기 원본 DB에만 1회 실행)
 python -m src.migrate
 
