@@ -71,3 +71,16 @@ def client(fake_repo: FakeEventRepository):
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def reset_telemetry():
+    yield
+    from opentelemetry import trace
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+    if getattr(app, "_is_instrumented_by_opentelemetry", False):
+        FastAPIInstrumentor.uninstrument_app(app)
+    trace._TRACER_PROVIDER = None
+    if hasattr(trace, "_TRACER_PROVIDER_SET_ONCE"):
+        trace._TRACER_PROVIDER_SET_ONCE._done = False

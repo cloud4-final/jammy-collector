@@ -111,3 +111,57 @@ def test_read_url_separation(setup_database):
         repo.ping()
 
     broken_read_pool.close()
+
+
+def test_db_spans_emitted(setup_database):
+    from fastapi.testclient import TestClient
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+        InMemorySpanExporter,
+    )
+
+    from apps.collector.src.db import close_db_pools, init_db_pools
+    from apps.collector.src.main import app
+    from apps.collector.src.telemetry import setup_tracing
+
+    provider = TracerProvider()
+    exporter = InMemorySpanExporter()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+
+    # Tracing configuration must happen before pool initialization
+    setup_tracing(app, tracer_provider=provider)
+
+    old_db_url = os.environ.get("DATABASE_URL")
+    try:
+        os.environ["DATABASE_URL"] = TEST_DB_URL
+        close_db_pools()
+        init_db_pools()
+        app.dependency_overrides.clear()
+
+        with TestClient(app) as client:
+            payload = {
+                "event_id": "test-db-span-evt-001",
+                "region": "site-a",
+                "vehicle_id": "v-span-1",
+                "speed_kmh": 65.5,
+                "payload": {"test": "span"},
+            }
+            res = client.post("/api/v1/events", json=payload)
+            assert res.status_code in (200, 201)
+
+        spans = exporter.get_finished_spans()
+        db_spans = [
+            s
+            for s in spans
+            if s.attributes and s.attributes.get("db.system") == "postgresql"
+        ]
+        assert len(db_spans) >= 1, (
+            f"Expected >= 1 db.system=postgresql span, got: {spans}"
+        )
+    finally:
+        close_db_pools()
+        if old_db_url is not None:
+            os.environ["DATABASE_URL"] = old_db_url
+        else:
+            os.environ.pop("DATABASE_URL", None)

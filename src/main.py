@@ -85,8 +85,8 @@ EVENTS_COLLECTED = Counter(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db_pools()
     setup_tracing(app)
+    init_db_pools()
     yield
     close_db_pools()
 
