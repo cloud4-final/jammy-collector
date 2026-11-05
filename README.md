@@ -1,3 +1,5 @@
+관측 스택: https://github.com/cloud4-final/jammy-observability, 팀 인프라: https://github.com/cloud4-final/hybrid-5th
+
 # Mobility Event Collector & Query API
 
 3거점(jammy-a, jammy-b, jammy-c) 하이브리드 클라우드 환경에서 차량 원격 측정(Telematics) 데이터를 수집하고 조회하기 위한 백엔드 API 서비스입니다.
@@ -7,11 +9,11 @@
 ## 1. 컨테이너 이미지
 
 - **공식 배포 이미지:**
-  `ghcr.io/cloud4-final/hybrid-5th/mobility-collector:sha-<short>`
-  - `main` 브랜치 머지 후 CI/CD 파이프라인의 `publish-image` 워크플로우에 의해 자동 빌드 및 게시됩니다.
+  `ghcr.io/cloud4-final/jammy-collector:sha-REPLACE_ME`
+  - `main` 브랜치 머지 후 CI/CD 파이프라인의 `Publish (.github/workflows/publish.yml)` 워크플로우에 의해 자동 빌드 및 게시됩니다.
 - **로컬 개발/테스트 빌드:**
   ```bash
-  docker build -t mobility-collector:dev apps/collector
+  docker build -t jammy-collector:dev .
   ```
 
 ---
@@ -22,6 +24,9 @@
 기본 포트는 `8000`입니다.
 
 ```bash
+# 0. 데이터베이스 연결 URL 설정 (예시)
+export DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres
+
 # 1. DB 마이그레이션 (쓰기 원본 DB에만 1회 실행)
 python -m src.migrate
 
@@ -37,7 +42,7 @@ docker run -d \
   -e SITE_ID=jammy-a \
   -e DATABASE_URL=postgresql://collector_writer:password@postgres-primary:5432/mobility \
   -e DATABASE_READ_URL=postgresql://collector_reader:password@postgres-replica:5432/mobility \
-  mobility-collector:dev
+  jammy-collector:dev
 ```
 
 ### 환경 변수 명세
@@ -169,7 +174,7 @@ HTTP/1.1 200 OK
 - `sample/send_events.sh`: 대량 이벤트 전송 스크립트.
   ```bash
   # 로컬 서버로 샘플 전송
-  ./apps/collector/sample/send_events.sh http://127.0.0.1:8000
+  ./sample/send_events.sh http://127.0.0.1:8000
   ```
 
 ---

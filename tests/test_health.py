@@ -52,10 +52,10 @@ def test_health_endpoints_not_traced():
         InMemorySpanExporter,
     )
 
-    from apps.collector.src.db import get_repository
-    from apps.collector.src.main import app
-    from apps.collector.src.telemetry import setup_tracing
-    from apps.collector.tests.conftest import FakeEventRepository
+    from src.db import get_repository
+    from src.main import app
+    from src.telemetry import setup_tracing
+    from tests.conftest import FakeEventRepository
 
     provider = TracerProvider()
     exporter = InMemorySpanExporter()

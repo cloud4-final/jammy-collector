@@ -3,9 +3,9 @@ import os
 import pytest
 from psycopg_pool import ConnectionPool
 
-from apps.collector.src.db import DatabaseUnavailable, PostgresEventRepository
-from apps.collector.src.main import MobilityEvent
-from apps.collector.src.migrate import run_migrations
+from src.db import DatabaseUnavailable, PostgresEventRepository
+from src.main import MobilityEvent
+from src.migrate import run_migrations
 
 TEST_DB_URL = os.getenv("TEST_DATABASE_URL")
 pytestmark = pytest.mark.skipif(
@@ -121,9 +121,9 @@ def test_db_spans_emitted(setup_database):
         InMemorySpanExporter,
     )
 
-    from apps.collector.src.db import close_db_pools, init_db_pools
-    from apps.collector.src.main import app
-    from apps.collector.src.telemetry import setup_tracing
+    from src.db import close_db_pools, init_db_pools
+    from src.main import app
+    from src.telemetry import setup_tracing
 
     provider = TracerProvider()
     exporter = InMemorySpanExporter()
