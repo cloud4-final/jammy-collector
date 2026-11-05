@@ -20,6 +20,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+      imagePullSecrets:
+        - name: ghcr-pull # 비공개 GHCR 이미지 pull용 (README 1절 참고)
       containers:
         - name: collector
           image: ghcr.io/cloud4-final/jammy-collector:sha-REPLACE_ME # main merge 후 생성된 sha-<short> 태그로 교체

@@ -11,6 +11,14 @@
 - **공식 배포 이미지:**
   `ghcr.io/cloud4-final/jammy-collector:sha-REPLACE_ME`
   - `main` 브랜치 머지 후 CI/CD 파이프라인의 `Publish (.github/workflows/publish.yml)` 워크플로우에 의해 자동 빌드 및 게시됩니다.
+- **비공개 이미지(private):** pull에 GitHub 인증이 필요합니다. 토큰은 `read:packages` 권한만 가진 classic PAT를 쓰고, 이 저장소에 읽기 권한이 있는 계정으로 발급합니다.
+  - 로컬: `echo <PAT> | docker login ghcr.io -u <GitHub ID> --password-stdin`
+  - K8s: 이미지를 쓰는 namespace마다 pull secret을 만들고, Deployment의 `imagePullSecrets`에 지정합니다(`deploy/k8s-example.yaml`에 반영됨).
+    ```bash
+    kubectl -n <namespace> create secret docker-registry ghcr-pull \
+      --docker-server=ghcr.io --docker-username=<GitHub ID> --docker-password=<PAT>
+    ```
+  - 토큰을 가진 사람이 바뀌거나 토큰이 만료되면 pull이 실패합니다. 만료일을 정해 두고 갱신 담당을 정하세요.
 - **로컬 개발/테스트 빌드:**
   ```bash
   docker build -t jammy-collector:dev .
@@ -187,6 +195,7 @@ HTTP/1.1 200 OK
   python -m src.migrate
   ```
 - 테이블 및 인덱스 생성 구문은 `IF NOT EXISTS`로 작성되어 멱등(Idempotent)합니다.
+- 스키마 `CREATE` 권한이 있는 계정으로 실행해야 합니다. 테이블이 이미 있어도 `INSERT`·`SELECT`만 가진 쓰기 계정으로 실행하면 `permission denied for schema public`으로 실패합니다. DB 관리자가 테이블을 미리 만들었다면 앱 배포 시 migrate는 생략합니다.
 
 ### 데이터베이스 역할 및 권한
 - **쓰기 Role (Primary)**:
