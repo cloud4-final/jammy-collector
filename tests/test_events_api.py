@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 
-from apps.collector.src.main import app
+from src.main import app
 
 
 def test_post_new_event_201(client):

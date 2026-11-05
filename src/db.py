@@ -8,7 +8,7 @@ from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
 if TYPE_CHECKING:
-    from apps.collector.src.main import MobilityEvent
+    from src.main import MobilityEvent
 
 DB_QUERY_DURATION = Histogram(
     "db_query_duration_seconds",

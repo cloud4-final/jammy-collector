@@ -16,24 +16,14 @@ from prometheus_client import (
 )
 from pydantic import BaseModel, Field
 
-try:
-    from apps.collector.src.db import (
-        DatabaseUnavailable,
-        EventRepository,
-        close_db_pools,
-        get_repository,
-        init_db_pools,
-    )
-    from apps.collector.src.telemetry import setup_tracing
-except ModuleNotFoundError:
-    from src.db import (
-        DatabaseUnavailable,
-        EventRepository,
-        close_db_pools,
-        get_repository,
-        init_db_pools,
-    )
-    from src.telemetry import setup_tracing
+from src.db import (
+    DatabaseUnavailable,
+    EventRepository,
+    close_db_pools,
+    get_repository,
+    init_db_pools,
+)
+from src.telemetry import setup_tracing
 
 
 # JSON 구조화 로거 설정

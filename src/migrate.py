@@ -8,7 +8,6 @@ import psycopg
 def get_sql_dir() -> Path:
     candidates = [
         Path(__file__).resolve().parent.parent / "sql",
-        Path.cwd() / "apps" / "collector" / "sql",
         Path.cwd() / "sql",
         Path("/app/sql"),
     ]

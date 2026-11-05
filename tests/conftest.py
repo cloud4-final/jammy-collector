@@ -3,8 +3,8 @@ from datetime import UTC, datetime
 import pytest
 from fastapi.testclient import TestClient
 
-from apps.collector.src.db import DatabaseUnavailable, EventRepository, get_repository
-from apps.collector.src.main import MobilityEvent, app
+from src.db import DatabaseUnavailable, EventRepository, get_repository
+from src.main import MobilityEvent, app
 
 
 class FakeEventRepository(EventRepository):
