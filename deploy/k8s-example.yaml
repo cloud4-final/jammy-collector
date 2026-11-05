@@ -22,7 +22,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: collector
-          image: ghcr.io/cloud4-final/hybrid-5th/mobility-collector:sha-REPLACE_ME # main merge 후 생성된 sha-<short> 태그로 교체
+          image: ghcr.io/cloud4-final/jammy-collector:sha-REPLACE_ME # main merge 후 생성된 sha-<short> 태그로 교체
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 10001
