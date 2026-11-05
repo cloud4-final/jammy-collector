@@ -62,6 +62,4 @@ def setup_tracing(
         tracer_provider=provider,
         excluded_urls=excluded_urls,
     )
-    # lifespan 시점에 이미 빌드된 middleware_stack에 OpenTelemetryMiddleware를 반영하기 위해 재빌드
-    app.middleware_stack = app.build_middleware_stack()
     return provider

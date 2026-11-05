@@ -81,6 +81,7 @@ def reset_telemetry():
 
     if getattr(app, "_is_instrumented_by_opentelemetry", False):
         FastAPIInstrumentor.uninstrument_app(app)
+    app.middleware_stack = None
     trace._TRACER_PROVIDER = None
     if hasattr(trace, "_TRACER_PROVIDER_SET_ONCE"):
         trace._TRACER_PROVIDER_SET_ONCE._done = False

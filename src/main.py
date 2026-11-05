@@ -85,7 +85,6 @@ EVENTS_COLLECTED = Counter(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    setup_tracing(app)
     init_db_pools()
     yield
     close_db_pools()
@@ -97,6 +96,9 @@ app = FastAPI(
     description="3거점 하이브리드 모빌리티 데이터 수집 및 헬스체크 API",
     lifespan=lifespan,
 )
+
+# 모듈 수준에서 미들웨어 스택이 빌드되기 전에 계측 설정
+setup_tracing(app)
 
 
 @app.middleware("http")
