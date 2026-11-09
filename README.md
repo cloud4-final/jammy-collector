@@ -1,4 +1,4 @@
-관측 스택: https://github.com/cloud4-final/jammy-observability, 팀 인프라: https://github.com/cloud4-final/hybrid-5th
+관측 스택: https://github.com/cloud4-final/jammy-observability, 팀 인프라: https://github.com/cloud4-final/jammy-5th
 
 # Mobility Event Collector & Query API
 
